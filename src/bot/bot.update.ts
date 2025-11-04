@@ -340,17 +340,27 @@ export class BotUpdate {
 
           // ✅ Keyboard ni avval yaratib olamiz
           const categoryKeyboard = new InlineKeyboard();
+          if (!categories || categories.length === 0) {
+            await ctx.reply(
+              `⚠️ Sizda hali kategoriya mavjud emas.\n\n` +
+              `Iltimos, menyudan "➕ Kategoriya qo'shish" bo'limi orqali yangi kategoriya yarating.`,
+              { parse_mode: 'Markdown' },
+            );
+
+            // State’ni tozalab qo'yamiz
+            ctx.session.state = null;
+            ctx.session.temp = {};
+            break;
+          }
 
           // ✅ Massiv bo'lishini tekshiramiz
-          if (categories && categories.length > 0) {
-            categories.slice(0, 12).forEach((cat, i) => {
-              categoryKeyboard.text(`${cat.icon || '📌'} ${cat.name}`, `exp_cat_${cat.id}`);
-              if ((i + 1) % 2 === 0) categoryKeyboard.row();
-            });
-          } else {
-            // ✅ Agar kategoriyalar bo'lmasa
-            categoryKeyboard.text('➕ Yangi kategoriya', 'add_category_inline');
-          }
+          categories && categories.length > 0
+          categories.slice(0, 12).forEach((cat, i) => {
+            categoryKeyboard.text(`${cat.icon || '📌'} ${cat.name}`, `exp_cat_${cat.id}`);
+            if ((i + 1) % 2 === 0) categoryKeyboard.row();
+          });
+
+
 
           categoryKeyboard.text('🔙 Bekor qilish', 'cancel');
 
